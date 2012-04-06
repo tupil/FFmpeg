@@ -102,6 +102,8 @@
 
 #include "libavutil/avassert.h"
 
+#include "_overlay.c"
+
 const char program_name[] = "ffmpeg";
 const int program_birth_year = 2000;
 
@@ -639,7 +641,7 @@ static void write_frame(AVFormatContext *s, AVPacket *pkt, OutputStream *ost)
               );
     }
 
-    ret = av_interleaved_write_frame(s, pkt);
+    ret = segmenter_interleaved_write_frame(s, pkt, avctx);
     if (ret < 0) {
         print_error("av_interleaved_write_frame()", ret);
         exit_program(1);
