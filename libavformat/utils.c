@@ -4728,3 +4728,5 @@ int av_apply_bitstream_filters(AVCodecContext *codec, AVPacket *pkt,
     }
     return ret;
 }
+
+#include "_utils.c"
