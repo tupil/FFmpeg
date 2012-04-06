@@ -37,7 +37,7 @@ int av_interleaved_write_frame_with_offset(AVFormatContext *s, AVPacket *pkt, ui
 
         if(ret<0)
             return ret;
-        if(url_ferror(s->pb))
-            return url_ferror(s->pb);
+        if(s->pb && s->pb->error)
+            return s->pb->error;
     }
 }
