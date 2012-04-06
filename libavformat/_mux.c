@@ -1,4 +1,4 @@
-// include this file at the and of libavformat/utils.c
+// include this file at the and of libavformat/mux.c
 
 extern int av_interleaved_write_frame_with_offset(AVFormatContext *s, AVPacket *pkt, uint64_t offset);
 
@@ -42,7 +42,7 @@ int av_interleaved_write_frame_with_offset(AVFormatContext *s, AVPacket *pkt, ui
 
         if(ret<0)
             return ret;
-        if(url_ferror(s->pb))
-            return url_ferror(s->pb);
+        if(s->pb && s->pb->error)
+            return s->pb->error;
     }
 }
