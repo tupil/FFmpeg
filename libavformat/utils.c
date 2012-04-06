@@ -5195,3 +5195,4 @@ int ff_bprint_to_codecpar_extradata(AVCodecParameters *par, struct AVBPrint *buf
     par->extradata_size = buf->len;
     return 0;
 }
+
