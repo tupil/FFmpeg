@@ -10,7 +10,9 @@ int av_interleaved_write_frame_with_offset(AVFormatContext *s, AVPacket *pkt, ui
     if(st->codec->codec_type == AVMEDIA_TYPE_AUDIO && pkt->size==0)
         return 0;
 
-//av_log(NULL, AV_LOG_DEBUG, "av_interleaved_write_frame %d %"PRId64" %"PRId64"\n", pkt->size, pkt->dts, pkt->pts);
+    if(s->debug & FF_FDEBUG_TS)
+        av_log(NULL, AV_LOG_INFO, "av_interleaved_write_frame_with_offset %d %"PRId64" %"PRId64"\n", pkt->size, pkt->dts, pkt->pts);
+
     if(compute_pkt_fields2(s, st, pkt) < 0 && !(s->oformat->flags & AVFMT_NOTIMESTAMPS))
         return -1;
 
@@ -19,7 +21,10 @@ int av_interleaved_write_frame_with_offset(AVFormatContext *s, AVPacket *pkt, ui
 	if (pkt->dts != AV_NOPTS_VALUE)
 	    pkt->dts += offset;
 
-//    fprintf(stderr, "DTS before, after: %lld, %lld, %i\n", pkt->dts-offset, pkt->dts, offset);
+    if(s->debug & FF_FDEBUG_TS) {
+        av_log(NULL, AV_LOG_INFO, "PTS before, after: %lld, %lld, %"PRIu64"\n", pkt->pts-offset, pkt->pts, offset);
+        av_log(NULL, AV_LOG_INFO, "DTS before, after: %lld, %lld, %"PRIu64"\n", pkt->dts-offset, pkt->dts, offset);
+    }
 
     if(pkt->dts == AV_NOPTS_VALUE && !(s->oformat->flags & AVFMT_NOTIMESTAMPS))
         return -1;
