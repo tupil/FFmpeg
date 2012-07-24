@@ -5,6 +5,7 @@
 #endif
 
 static double prev_segment_time = -1;
+static double prev_segment_exact_time = -1;
 
 extern int av_interleaved_write_frame_with_offset(AVFormatContext *s, AVPacket *pkt, uint64_t offset);
 
@@ -39,6 +40,7 @@ static int64_t segmenter(AVFormatContext *s, AVPacket *pkt, AVCodecContext *avct
 	if (prev_segment_time == -1)
 	{
 		prev_segment_time = 0; // segment_offset;
+    prev_segment_exact_time = 0;
 	}
 	
     if (avctx->codec_type == AVMEDIA_TYPE_VIDEO)
@@ -59,10 +61,17 @@ static int64_t segmenter(AVFormatContext *s, AVPacket *pkt, AVCodecContext *avct
  	if (segment_time - prev_segment_time >= segment_length) 
     {
     	const char *sbreak = "-------SEGMENT-BREAK-------";
-		avio_write(s->pb, sbreak, strlen(sbreak));
+      const char *send   = "-------";
+      char sduration[10];
+      sprintf(sduration, "%.5f", segment_time - prev_segment_exact_time);
+
+		    avio_write(s->pb, sbreak, strlen(sbreak));
+        avio_write(s->pb, sduration, strlen(sduration));
+        avio_write(s->pb, send, strlen(send));
         avio_flush(s->pb);
 						
         prev_segment_time += segment_length;
+        prev_segment_exact_time = segment_time;
     }
     
     if (video_stream != NULL)
