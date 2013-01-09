@@ -1,4 +1,4 @@
-// include this file at the and of libavformat/utils.c
+// include this file at the and of libavformat/mux.c
 
 extern int av_interleaved_write_frame_with_offset(AVFormatContext *s, AVPacket *pkt, uint64_t offset);
 
