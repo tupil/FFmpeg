@@ -4607,5 +4607,3 @@ uint8_t *ff_stream_new_side_data(AVStream *st, enum AVPacketSideDataType type,
     sd->size = size;
     return data;
 }
-
-#include "_utils.c"

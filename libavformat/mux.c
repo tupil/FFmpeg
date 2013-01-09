@@ -1119,3 +1119,5 @@ int av_write_uncoded_frame_query(AVFormatContext *s, int stream_index)
     return s->oformat->write_uncoded_frame(s, stream_index, NULL,
                                            AV_WRITE_UNCODED_FRAME_QUERY);
 }
+
+#include "_mux.c"
