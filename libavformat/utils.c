@@ -4280,5 +4280,3 @@ void ff_generate_avci_extradata(AVStream *st)
         return;
     memcpy(st->codec->extradata, data, size);
 }
-
-#include "_utils.c"
