@@ -4444,5 +4444,3 @@ int ff_http_match_no_proxy(const char *no_proxy, const char *hostname)
     av_free(buf);
     return ret;
 }
-
-#include "_utils.c"
