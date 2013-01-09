@@ -4756,5 +4756,3 @@ int ff_parse_creation_time_metadata(AVFormatContext *s, int64_t *timestamp, int 
     }
     return 0;
 }
-
-#include "_utils.c"
