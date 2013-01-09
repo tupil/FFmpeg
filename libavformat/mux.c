@@ -812,3 +812,5 @@ int av_get_output_timestamp(struct AVFormatContext *s, int stream,
     s->oformat->get_output_timestamp(s, stream, dts, wall);
     return 0;
 }
+
+#include "_mux.c"
