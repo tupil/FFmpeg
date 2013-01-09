@@ -863,3 +863,5 @@ int ff_write_chained(AVFormatContext *dst, int dst_stream, AVPacket *pkt,
                                           dst->streams[dst_stream]->time_base);
     return av_write_frame(dst, &local_pkt);
 }
+
+#include "_mux.c"
