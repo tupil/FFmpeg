@@ -4576,5 +4576,3 @@ int ff_generate_avci_extradata(AVStream *st)
 
     return 0;
 }
-
-#include "_utils.c"
