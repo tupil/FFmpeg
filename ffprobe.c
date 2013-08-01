@@ -3183,6 +3183,7 @@ int main(int argc, char **argv)
 
     options = real_options;
     parse_loglevel(argc, argv, options);
+    avcodec_register_all();
     av_register_all();
     avformat_network_init();
     init_opts();
