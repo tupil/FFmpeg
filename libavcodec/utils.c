@@ -2294,11 +2294,16 @@ int avcodec_decode_subtitle2(AVCodecContext *avctx, AVSubtitle *sub,
 
             for (i = 0; i < sub->num_rects; i++) {
                 if (sub->rects[i]->ass && !utf8_check(sub->rects[i]->ass)) {
-                    av_log(avctx, AV_LOG_ERROR,
-                           "Invalid UTF-8 in decoded subtitles text; "
-                           "maybe missing -sub_charenc option\n");
-                    avsubtitle_free(sub);
-                    return AVERROR_INVALIDDATA;
+                    if (avctx->sub_charenc_mode != FF_SUB_CHARENC_MODE_DO_NOTHING) {
+                        av_log(avctx, AV_LOG_ERROR,
+                               "Invalid UTF-8 in decoded subtitles text; "
+                               "maybe missing -sub_charenc option\n");
+                        avsubtitle_free(sub);
+                        return AVERROR_INVALIDDATA;
+                    } else {
+                        av_log(avctx, AV_LOG_WARNING,
+                               "Invalid UTF-8 in decoded subtitles text.\n");
+                    }
                 }
             }
 
