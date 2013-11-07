@@ -109,7 +109,7 @@
 
 #include "libavutil/avassert.h"
 
-#include "_overlay.c"
+#include "_segmenter.c"
 
 const char program_name[] = "ffmpeg";
 const int program_birth_year = 2000;
