@@ -465,6 +465,12 @@ static void preprocess_arguments(int *argc, char ***argv)
 					i += 1;
 					continue;
 				}
+				else if (strcmp((*argv)[i], "--segment-iframe-only") == 0)
+				{
+					sscanf((*argv)[i+1], "%i", &segment_iframe_only);
+					i += 1;
+					continue;
+				}
 		
 		res[index++] = (*argv)[i];
 		
