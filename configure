@@ -302,6 +302,8 @@ Advanced options (experts only):
                            (faster, but may crash)
   --enable-memalign-hack   emulate memalign, interferes with memory debuggers
   --enable-lto             use link-time optimization
+  --enable-static-dependencies
+                           use static versions of all component dependencies [no]
 
 Optimization options (experts only):
   --disable-asm            disable all assembler optimizations
@@ -1370,6 +1372,7 @@ CONFIG_LIST="
     small
     sram
     static
+    static_dependencies
     swscale_alpha
     thumb
     version3
@@ -2779,6 +2782,8 @@ if ! $pkg_config --version >/dev/null 2>&1; then
     warn "$pkg_config not found, library detection may fail."
     pkg_config=false
 fi
+
+enabled static_dependencies && pkg_config="$pkg_config --static"
 
 exesuf() {
     case $1 in
