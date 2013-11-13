@@ -10,6 +10,7 @@ extern int av_interleaved_write_frame_with_offset(AVFormatContext *s, AVPacket *
 
 static int segment_length = 0;
 static int segment_offset = 0;
+static int segment_iframe_only = 1;
 
 static int64_t segmenter(AVFormatContext *s, AVPacket *pkt, AVCodecContext *avctx)
 { 
@@ -44,7 +45,7 @@ static int64_t segmenter(AVFormatContext *s, AVPacket *pkt, AVCodecContext *avct
     if (avctx->codec_type == AVMEDIA_TYPE_VIDEO)
     {
 	    AVStream *video_st = s->streams[pkt->stream_index];    	
-    	if (pkt->flags & AV_PKT_FLAG_KEY) 
+       if (pkt->flags & AV_PKT_FLAG_KEY || segment_iframe_only == 0)
         {
             segment_time = (double)video_st->pts.val * video_st->time_base.num / video_st->time_base.den;
         }
