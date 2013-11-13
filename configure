@@ -333,6 +333,8 @@ Toolchain options:
   --enable-thumb           compile for Thumb instruction set
   --enable-lto             use link-time optimization
   --env="ENV=override"     override the environment variables
+  --enable-static-dependencies
+                           use static versions of all component dependencies [no]
 
 Advanced options (experts only):
   --malloc-prefix=PREFIX   prefix malloc and related names with PREFIX
@@ -1456,6 +1458,7 @@ FEATURE_LIST="
     shared
     small
     static
+    static_dependencies
     swscale_alpha
 "
 
@@ -3287,6 +3290,8 @@ if test $doxygen != $doxygen_default && \
   ! $doxygen --version >/dev/null 2>&1; then
     warn "Specified doxygen \"$doxygen\" not found, API documentation will fail to build."
 fi
+
+enabled static_dependencies && pkg_config="$pkg_config --static"
 
 exesuf() {
     case $1 in
