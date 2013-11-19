@@ -5,6 +5,7 @@ extern int av_interleaved_write_frame_with_offset(AVFormatContext *s, AVPacket *
 static int segment_length = 0;
 static int segment_offset = 0;
 static int segment_iframe_only = 1;
+static int64_t start_pts = AV_NOPTS_VALUE;
 
 static int64_t segmenter(AVFormatContext *s, AVPacket *pkt, AVCodecContext *avctx)
 { 
@@ -35,20 +36,25 @@ static int64_t segmenter(AVFormatContext *s, AVPacket *pkt, AVCodecContext *avct
 	{
 		prev_segment_time = 0; // segment_offset;
 	}
+
+    if (start_pts == AV_NOPTS_VALUE)
+    {
+        start_pts = pkt->pts;
+    }
 	
     if (avctx->codec_type == AVMEDIA_TYPE_VIDEO)
     {
 	    AVStream *video_st = s->streams[pkt->stream_index];    	
        if (pkt->flags & AV_PKT_FLAG_KEY || segment_iframe_only == 0)
         {
-            segment_time = (double)video_st->pts.val * video_st->time_base.num / video_st->time_base.den;
+            segment_time = (double)(pkt->pts - start_pts) * video_st->time_base.num / video_st->time_base.den;
         }
     }
     else if (video_stream == NULL)
     {
 		// only do this when there is no video stream, otherwise the segment break will not be on keyframe
     	AVStream *st = s->streams[pkt->stream_index];    	
-        segment_time = (double)st->pts.val * st->time_base.num / st->time_base.den;
+        segment_time = (double)(pkt->pts - start_pts) * st->time_base.num / st->time_base.den;
     }
     
  	if (segment_time - prev_segment_time >= segment_length) 
