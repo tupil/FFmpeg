@@ -57,7 +57,7 @@ static int srt_decode_frame(AVCodecContext *avctx,
 {
     AVSubtitle *sub = data;
     AVBPrint buffer;
-    int ts_start, ts_end, x1 = -1, y1 = -1, x2 = -1, y2 = -1;
+    int ts_start, ts_duration, x1 = -1, y1 = -1, x2 = -1, y2 = -1;
     int size, ret;
     const uint8_t *p = av_packet_get_side_data(avpkt, AV_PKT_DATA_SUBTITLE_POSITION, &size);
 
@@ -77,12 +77,17 @@ static int srt_decode_frame(AVCodecContext *avctx,
     ts_start = av_rescale_q(avpkt->pts,
                             avctx->time_base,
                             (AVRational){1,100});
-    ts_end   = av_rescale_q(avpkt->pts + avpkt->duration,
-                            avctx->time_base,
-                            (AVRational){1,100});
+
+    // Floor the duration (for ASS output)
+    ts_duration = avpkt->duration / 10;
+
+    // Set an exact end display time to prevent the rounding for ASS messing it up
+    sub->end_display_time = av_rescale_q(avpkt->duration,
+                                         avctx->pkt_timebase,
+                                         (AVRational){1,1000});
 
     srt_to_ass(avctx, &buffer, avpkt->data, x1, y1, x2, y2);
-    ret = ff_ass_add_rect_bprint(sub, &buffer, ts_start, ts_end-ts_start);
+    ret = ff_ass_add_rect_bprint(sub, &buffer, ts_start, ts_duration);
     av_bprint_finalize(&buffer, NULL);
     if (ret < 0)
         return ret;
