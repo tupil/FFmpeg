@@ -412,10 +412,17 @@ ASSDialog *ff_ass_split_dialog(ASSSplitContext *ctx, const char *buf,
                                int cache, int *number)
 {
     ASSDialog *dialog = NULL;
-    int i, count;
+    int i, j, count;
     if (!cache)
         for (i=0; i<FF_ARRAY_ELEMS(ass_sections); i++)
             if (!strcmp(ass_sections[i].section, "Events")) {
+                /* If the subtitle_header did not contain an ‘Events’ section, initialize as default */
+                if (ctx->current_section != i) {
+                    ctx->current_section = i;
+                    ctx->field_order[i] = get_default_field_orders(&ass_sections[i], number);
+                    for (j=0; ctx->field_order[i][j] != -1; j++);
+                    ctx->field_number[i] = j;
+                }
                 free_section(ctx, &ass_sections[i]);
                 break;
             }
