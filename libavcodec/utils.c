@@ -2450,7 +2450,7 @@ int avcodec_decode_subtitle2(AVCodecContext *avctx, AVSubtitle *sub,
             av_assert1((ret >= 0) >= !!*got_sub_ptr &&
                        !!*got_sub_ptr >= !!sub->num_rects);
 
-            if (sub->num_rects && !sub->end_display_time && avpkt->duration &&
+            if (sub->num_rects && !sub->end_display_time && avpkt->duration > 0 &&
                 avctx->pkt_timebase.num) {
                 AVRational ms = { 1, 1000 };
                 sub->end_display_time = av_rescale_q(avpkt->duration,
