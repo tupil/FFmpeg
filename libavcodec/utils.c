@@ -2731,7 +2731,7 @@ FF_ENABLE_DEPRECATION_WARNINGS
             }
 #endif
 
-            if (sub->num_rects && !sub->end_display_time && avpkt->duration &&
+            if (sub->num_rects && !sub->end_display_time && avpkt->duration > 0 &&
                 avctx->pkt_timebase.num) {
                 AVRational ms = { 1, 1000 };
                 sub->end_display_time = av_rescale_q(avpkt->duration,
