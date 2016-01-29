@@ -53,6 +53,7 @@ typedef struct {
     char *fontsdir;
     char *charenc;
     char *force_style;
+    int64_t start_time;
     int stream_index;
     uint8_t rgba_map[4];
     int     pix_step[4];       ///< steps per pixel for each plane of the main output
@@ -69,6 +70,7 @@ typedef struct {
     {"f",              "set the filename of file to read",                         OFFSET(filename),   AV_OPT_TYPE_STRING,     {.str = NULL},  CHAR_MIN, CHAR_MAX, FLAGS }, \
     {"original_size",  "set the size of the original video (used to scale fonts)", OFFSET(original_w), AV_OPT_TYPE_IMAGE_SIZE, {.str = NULL},  CHAR_MIN, CHAR_MAX, FLAGS }, \
     {"fontsdir",       "set the directory containing the fonts to read",           OFFSET(fontsdir),   AV_OPT_TYPE_STRING,     {.str = NULL},  CHAR_MIN, CHAR_MAX, FLAGS }, \
+    {"ss",             "set the position to seek to",                              OFFSET(start_time), AV_OPT_TYPE_INT64,      {.i64 = 0   },  INT_MIN,  INT_MAX,  FLAGS }, \
 
 /* libass supports a log level ranging from 0 to 7 */
 static const int ass_libavfilter_log_level_map[] = {
@@ -179,7 +181,7 @@ static int filter_frame(AVFilterLink *inlink, AVFrame *picref)
     AVFilterLink *outlink = ctx->outputs[0];
     AssContext *ass = ctx->priv;
     int detect_change = 0;
-    double time_ms = picref->pts * av_q2d(inlink->time_base) * 1000;
+    double time_ms = (picref->pts * av_q2d(inlink->time_base) + ass->start_time) * 1000;
     ASS_Image *image = ass_render_frame(ass->renderer, ass->track,
                                         time_ms, &detect_change);
 
