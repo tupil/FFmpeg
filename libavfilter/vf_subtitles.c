@@ -307,6 +307,7 @@ static av_cold int init_subtitles(AVFilterContext *ctx)
     AVStream *st;
     AVPacket pkt;
     AssContext *ass = ctx->priv;
+    int64_t timestamp;
 
     /* Init libass */
     ret = init(ctx);
@@ -425,6 +426,16 @@ static av_cold int init_subtitles(AVFilterContext *ctx)
         ass_process_codec_private(ass->track,
                                   dec_ctx->subtitle_header,
                                   dec_ctx->subtitle_header_size);
+
+    /* Skip the parts that won’t be used anyway */
+    timestamp = av_rescale(ass->start_time, st->time_base.den,
+                           AV_TIME_BASE * (int64_t) st->time_base.num);
+    ret = av_seek_frame(fmt, sid, timestamp, 0);
+    if (ret < 0) {
+        av_log(ctx, AV_LOG_WARNING, "Error seeking: %s (ignored)\n",
+               av_err2str(ret));
+    }
+
     av_init_packet(&pkt);
     pkt.data = NULL;
     pkt.size = 0;
